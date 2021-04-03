@@ -1,7 +1,7 @@
 const express = require('express');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require('fs');
-const { infuraProjectId, privateKey, privateKeyGanache, etherApiKey, bscApiKey } = JSON.parse(fs.readFileSync('.secret').toString().trim());
+const { privateKey } = JSON.parse(fs.readFileSync('.secret').toString().trim());
 const binanceProvider = new HDWalletProvider({
   privateKeys: privateKey,
   providerOrUrl: `https://data-seed-prebsc-1-s1.binance.org:8545`
@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 var cors = require('cors');
 app.use(cors());
-let contracts;
 var Web3 = require('web3');
 var web3 = new Web3(binanceProvider);
 
@@ -32,12 +31,9 @@ console.log('bouncerContract', bouncerContract);
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   console.log("/");
-  res.set('Content-Type', 'application/json');
-  res.end(JSON.stringify({ hello: "world" }));
-
+  res.json({msg:'success'})
 });
 
-let txHashkey = "tx";
 
 app.post('/tx', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -66,10 +62,7 @@ app.post('/tx', async (req, res) => {
       // address sender, address signer, address destination, uint value, bytes data, address rewardToken, uint rewardAmount
       let hash = await contract.methods.getHash(req.body.parts[1], req.body.parts[2], req.body.parts[3], req.body.parts[4], req.body.parts[5], req.body.parts[6]).call();
       console.log("HASH:", hash);
-      console.log("Checking centralized db for collision before mining....");
-      let thisTxsKey = txHashkey + hash.toLowerCase();
-      console.log("Getting Transaction with hash ", thisTxsKey);
-
+      
       console.log("NO EXISTING TX, DOING TX");
       //const result = await clevis("contract","forward","BouncerProxy",accountIndexSender,sig,accounts[accountIndexSigner],localContractAddress("Example"),"0",data,rewardAddress,reqardAmount)
       console.log("TX", req.body.sig, req.body.parts[1], req.body.parts[2], req.body.parts[3], req.body.parts[4], req.body.parts[5], req.body.parts[6]);
@@ -100,9 +93,7 @@ app.post('/tx', async (req, res) => {
         .then((receipt) => {
           console.log("TX THEN", receipt);
         });
-
-      res.set('Content-Type', 'application/json');
-      res.end(JSON.stringify({ hello: "world" }));
+        res.json({msg:'success'})
     } catch (err) {
       console.error(err);
       res.sendStatus(500);
