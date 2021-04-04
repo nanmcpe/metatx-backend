@@ -24,7 +24,7 @@ web3.eth.getAccounts().then((_accounts) => {
   accounts = _accounts;
   console.log("ACCOUNTS", accounts);
 });
-const contractAddress = '0xc5f34ecd89012c12c3ed780cdf81f8e130ac123f';
+const contractAddress = '0x9f930eE9305F816F5C6d9bDc1a6073Fee19Ace43';
 const bouncerContract = new web3.eth.Contract(BouncerProxy, contractAddress);
 console.log('bouncerContract', bouncerContract);
 
